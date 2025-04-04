@@ -583,6 +583,7 @@ def display_batch_processing():
                 # Display individual results in expandable sections
                 st.subheader("Individual Image Results")
                 
+                # Instead of nesting expanders, use columns or other layout elements
                 for i, result in enumerate(all_results):
                     with st.expander(f"Image {i+1}: {result['filename']}"):
                         # Display images side by side
@@ -592,7 +593,6 @@ def display_batch_processing():
                         with col2:
                             st.image(result["processed_image"], caption="Processed Image", use_container_width=True)
                         
-                        # Display detection info
                         # Display detection info
                         if result["detected_diseases"]:
                             st.write(f"**Detected Diseases:** {', '.join(set(info['Label'] for info in result['detection_info']))}")
@@ -604,8 +604,11 @@ def display_batch_processing():
                             diseases = set(info['Label'] for info in result['detection_info'])
                             solutions = get_batch_solutions(diseases)
                             
-                            for disease in diseases:
-                                with st.expander(f"Solution for {disease}"):
+                            # Use tabs instead of nested expanders
+                            disease_tabs = st.tabs([f"Solution for {d}" for d in diseases])
+                            
+                            for tab, disease in zip(disease_tabs, diseases):
+                                with tab:
                                     solution = solutions.get(disease, {})
                                     if solution.get("success", False):
                                         st.markdown(solution["solution"])
